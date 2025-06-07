@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEMON</title>
+  <style>
+    body {
+      background-color: black;
+      color: lime;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+      transition: all 0.5s ease;
+    }h1 {
+  font-size: 4em;
+  animation: glitchText 2s infinite;
+}
+
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+}
+
+.glitch::before {
+  animation: glitchTop 0.3s infinite linear alternate-reverse;
+  color: red;
+  top: -2px;
+}
+
+.glitch::after {
+  animation: glitchBottom 0.3s infinite linear alternate-reverse;
+  color: blue;
+  top: 2px;
+}
+
+@keyframes glitchTop {
+  0% { left: 0px; }
+  20% { left: -3px; }
+  40% { left: 3px; }
+  60% { left: -5px; }
+  80% { left: 5px; }
+  100% { left: 0px; }
+}
+
+@keyframes glitchBottom {
+  0% { left: 0px; }
+  20% { left: 4px; }
+  40% { left: -4px; }
+  60% { left: 6px; }
+  80% { left: -6px; }
+  100% { left: 0px; }
+}
+
+#jumpscare {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black url('https://i.imgur.com/8K8jZ6B.png') center/contain no-repeat;
+  z-index: 100;
+}
+
+  </style>
+</head>
+<body>
+  <div id="jumpscare"></div>
+  <h1 class="glitch" data-text="LEMON">LEMON</h1><audio id="scream" src="https://www.fesliyanstudios.com/play-mp3/4383" preload="auto"></audio>
+
+  <script>
+    const text = document.querySelector(".glitch");
+    const body = document.body;
+    const js = document.getElementById('jumpscare');
+    const scream = document.getElementById('scream');
+
+    let state = true;
+    let glitchSpeed = 1500;
+    let darkMode = false;
+    let chaosWords = [
+      "LEMON", "LXM0N", "@#$&^", "?!#(@", "#%L3^^", "L3M()N", "#ERR0R", "--GL1TCH--"
+    ];
+    let timeElapsed = 0;
+
+    // Tukar teks dan efek
+    const glitchInterval = setInterval(() => {
+      if (!darkMode) {
+        const word = state ? "LXM0N" : "LEMON";
+        text.textContent = word;
+        text.setAttribute("data-text", word);
+        state = !state;
+      }
+    }, glitchSpeed);
+
+    // Gegaran skrin makin laju setiap 2 saat
+    const shakeInterval = setInterval(() => {
+      body.style.transform = `translate(${Math.random()*10 - 5}px, ${Math.random()*10 - 5}px)`;
+    }, 100);
+
+    const shakeSpeedInterval = setInterval(() => {
+      glitchSpeed = Math.max(100, glitchSpeed - 200);
+    }, 2000);
+
+    // Chaos mode pada saat ke-60
+    setTimeout(() => {
+      darkMode = true;
+      body.style.backgroundColor = "#000";
+      body.style.color = "#ff0033";
+
+      clearInterval(glitchInterval);
+      const chaosInterval = setInterval(() => {
+        const randomWord = chaosWords[Math.floor(Math.random() * chaosWords.length)];
+        text.textContent = randomWord;
+        text.setAttribute("data-text", randomWord);
+      }, 300);
+    }, 60000);
+
+    // Kembali normal pada saat ke-90
+    setTimeout(() => {
+      location.reload();
+    }, 90000);
+
+    // Jumpscare muncul rawak antara 5-10 saat
+    function showJumpscare() {
+      js.style.display = 'block';
+      scream.play();
+
+      setTimeout(() => {
+        js.style.display = 'none';
+      }, 2500);
+    }
+
+    setInterval(() => {
+      if (Math.random() < 0.3) showJumpscare();
+    }, Math.floor(Math.random() * 5000) + 5000);
+  </script></body>
+</html>
